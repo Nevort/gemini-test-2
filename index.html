@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Gemini Test RPM</title></head>
+<body>
+<button onclick="testChat()">Тест запрос (1/мин для лимита)</button>
+<button onclick="stressTest()">Stress 15 запросов</button>
+<div id="result"></div>
+<script src="https://js.puter.com/v2/"></script>
+<script>
+let count = 0;
+async function testChat() {
+  count++;
+  document.getElementById('result').innerHTML += `<p>Запрос ${count}:</p>`;
+  try {
+    const res = await puter.ai.chat(`Расскажи шутку номер ${count} простыми словами`, {model: 'gemini-2.5-flash'});
+    document.getElementById('result').innerHTML += res.message.content + '<br>';
+  } catch(e) {
+    document.getElementById('result').innerHTML += 'ОШИБКА: ' + e + '<br>';
+  }
+}
+async function stressTest() {
+  for(let i=1; i<=15; i++) {
+    await testChat();
+    await new Promise(r => setTimeout(r, 5000)); // 5 сек пауза
+  }
+}
+</script>
+</body>
+</html>
